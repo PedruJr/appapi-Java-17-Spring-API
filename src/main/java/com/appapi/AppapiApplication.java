@@ -1,4 +1,4 @@
-package com.appapi.appapi;
+package com.appapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
