@@ -4,6 +4,7 @@ import com.appapi.adapters.input.controller.dto.CreateUserDTO;
 import com.appapi.adapters.input.controller.dto.LoginRequestDTO;
 import com.appapi.adapters.input.controller.dto.LoginResponseDTO;
 import com.appapi.application.services.UserService;
+import com.appapi.domain.exceptions.EntityNotFoundException;
 import com.appapi.domain.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,16 +39,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        Optional<User> userOptional = userService.findUserByUsername(loginRequestDTO.getUsername());
-
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(401).build();
-        }
-
-        User user = userOptional.get();
+        User user = userService.findUserByUsername(loginRequestDTO.getUsername());
 
         if (!user.getPassword().equals(loginRequestDTO.getPassword())) {
-            return ResponseEntity.status(401).build();
+            throw new EntityNotFoundException("Senha inválida para o usuário informado"); // ou criar uma nova exception tipo InvalidCredentialsException depois
         }
 
         String token = jwtTokenProvider.generateToken(user.getUsername());
